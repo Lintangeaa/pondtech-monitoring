@@ -18,9 +18,12 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 # Set working directory di dalam container
 WORKDIR /var/www/html
 
-# Tambahkan permission agar www-data (user PHP-FPM) dapat menulis ke storage dan cache Laravel
+# Buat direktori storage Laravel
+RUN mkdir -p storage
+
+# Tambahkan permission agar www-data (user PHP-FPM) dapat menulis ke storage Laravel
 RUN chown -R www:www /var/www/html
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage
 
 # Expose port 9000 untuk PHP-FPM
 EXPOSE 9000

@@ -21,7 +21,7 @@ services:
             - DB_PASSWORD=${DB_PASSWORD}
 
     npm:
-        image: node:14
+        image: node:20
         container_name: pondtech_monitoring_npm
         working_dir: /var/www
         volumes:

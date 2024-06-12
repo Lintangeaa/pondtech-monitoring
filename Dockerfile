@@ -1,23 +1,8 @@
-# Dockerfile
-
 # Gunakan image PHP resmi dengan Apache
 FROM php:8.2-apache
 
 # Install dependensi yang diperlukan
-RUN apt-get update && apt-get install -y \
-  build-essential \
-  libpng-dev \
-  libjpeg-dev \
-  libfreetype6-dev \
-  libonig-dev \
-  libxml2-dev \
-  zip \
-  unzip \
-  git \
-  curl \
-  nodejs \
-  npm
-
+RUN apt-get update && apt-get install -y nodejs npm
 # Install ekstensi PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
@@ -32,7 +17,9 @@ COPY . .
 
 # Install dependensi aplikasi
 RUN composer install
-RUN npm install && npm run build
+
+# Jalankan npm install dan npm run dev
+RUN npm install && npm run dev
 
 # Copy konfigurasi Apache
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf

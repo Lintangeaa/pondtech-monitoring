@@ -27,7 +27,7 @@ services:
 
     # Service untuk Node.js
     node:
-        image: node:20
+        image: node:latest
         restart: unless-stopped
         working_dir: /var/www/html
         volumes:

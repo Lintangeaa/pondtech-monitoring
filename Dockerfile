@@ -27,10 +27,6 @@ RUN composer install --no-scripts --no-autoloader
 # Copy seluruh proyek Laravel ke image Docker
 COPY . .
 
-# Compile asset menggunakan Laravel Mix (misalnya untuk Vue.js)
-RUN npm install
-RUN npm run dev
-
 # Tambahkan permission agar www-data (user PHP-FPM) dapat menulis ke storage Laravel
 RUN chown -R www:www /var/www/html
 RUN chmod -R 775 /var/www/html/storage

@@ -20,7 +20,7 @@ export default function Authenticated({ user, header, children }) {
                                     <img
                                         src="logo.png"
                                         alt="PONDTech"
-                                        className="h-24"
+                                        className="h-16"
                                     />
                                 </Link>
                             </div>

@@ -1,38 +1,26 @@
-# Gunakan image PHP resmi dengan Apache
-FROM php:8.2-apache
+# Gunakan image resmi PHP 8.2
+FROM php:8.2-fpm
 
-# Install dependensi yang diperlukan
-RUN apt-get update && apt-get install -y nodejs npm
-# Install ekstensi PHP
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Install dependensi yang diperlukan untuk Laravel
+RUN apt-get update && apt-get install -y \
+  libzip-dev \
+  zip \
+  unzip \
+  && docker-php-ext-install pdo_mysql zip
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Set working directory
-WORKDIR /var/www
+# Tambahkan pengguna dan grup untuk menghindari permission issues
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-# Copy file aplikasi
-COPY . .
+# Set working directory di dalam container
+WORKDIR /var/www/html
 
-# Install dependensi aplikasi
-RUN composer install
+# Tambahkan permission agar www-data (user PHP-FPM) dapat menulis ke storage dan cache Laravel
+RUN chown -R www:www /var/www/html
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Jalankan npm install dan npm run dev
-RUN npm install && npm run dev
-
-# Copy konfigurasi Apache
-COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-
-# Enable mod_rewrite
-RUN a2enmod rewrite
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www \
-  && chmod -R 755 /var/www/storage
-
-# Expose port 80
-EXPOSE 80
-
-# Jalankan Apache
-CMD ["apache2-foreground"]
+# Expose port 9000 untuk PHP-FPM
+EXPOSE 9000

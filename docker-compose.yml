@@ -1,34 +1,40 @@
-version: "3.8"
+version: "3"
 
 services:
-    app:
+    # Service untuk PHP-FPM (Laravel)
+    php:
         build:
             context: .
             dockerfile: Dockerfile
-        image: pondtech_monitoring
-        container_name: pondtech_monitoring
+        restart: unless-stopped
+        volumes:
+            - .:/var/www/html
+        networks:
+            - app-network
+
+    # Service untuk server web (misalnya Nginx)
+    # Anda bisa menggantinya dengan server web lain seperti Apache
+    webserver:
+        image: nginx:alpine
+        restart: unless-stopped
         ports:
             - "8000:80"
         volumes:
-            - .:/var/www
+            - .:/var/www/html
+            - ./docker/nginx:/etc/nginx/conf.d
         networks:
-            - laravel
-        environment:
-            - DB_HOST=${DB_HOST}
-            - DB_PORT=${DB_PORT}
-            - DB_DATABASE=${DB_DATABASE}
-            - DB_USERNAME=${DB_USERNAME}
-            - DB_PASSWORD=${DB_PASSWORD}
+            - app-network
 
-    npm:
+    # Service untuk Node.js
+    node:
         image: node:20
-        container_name: pondtech_monitoring_npm
-        working_dir: /var/www
+        restart: unless-stopped
+        working_dir: /var/www/html
         volumes:
-            - .:/var/www
-        command: ["npm", "run", "dev"]
+            - .:/var/www/html
         networks:
-            - laravel
+            - app-network
 
 networks:
-    laravel:
+    app-network:
+        driver: bridge

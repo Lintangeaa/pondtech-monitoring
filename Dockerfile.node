@@ -1,0 +1,20 @@
+# Gunakan image resmi Node.js LTS
+FROM node:lts
+
+# Set working directory di dalam container
+WORKDIR /var/www/html
+
+# Copy seluruh proyek Laravel ke image Docker
+COPY . .
+
+# Install dependensi Node.js
+RUN npm install
+
+# Compile asset menggunakan Laravel Mix (misalnya untuk Vue.js)
+RUN npm run dev
+
+# Expose port jika diperlukan (misalnya untuk pengembangan dengan hot reload)
+# EXPOSE 3000
+
+# Command default untuk menjalankan node.js
+CMD ["npm", "start"]

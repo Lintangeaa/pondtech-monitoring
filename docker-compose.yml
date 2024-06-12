@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-    # Service untuk PHP-FPM (Laravel)
     php:
         build:
             context: .
@@ -12,24 +11,22 @@ services:
         networks:
             - app-network
 
-    # Service untuk server web (misalnya Nginx)
-    # Anda bisa menggantinya dengan server web lain seperti Apache
-    webserver:
+    nginx:
         image: nginx:alpine
         restart: unless-stopped
         ports:
-            - "8000:80"
+            - "80:80"
         volumes:
-            - .:/var/www/html
             - ./docker/nginx:/etc/nginx/conf.d
+            - .:/var/www/html
         networks:
             - app-network
 
-    # Service untuk Node.js
     node:
-        image: node:latest
+        build:
+            context: .
+            dockerfile: Dockerfile.node
         restart: unless-stopped
-        working_dir: /var/www/html
         volumes:
             - .:/var/www/html
         networks:
